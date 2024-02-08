@@ -1,5 +1,6 @@
 package com.example.mvvmfiguras1.views
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -57,6 +58,7 @@ import com.example.mvvmfiguras1.ui.theme.AguamarinaAmiibo
 import com.example.mvvmfiguras1.viewmodels.FigurasViewModel
 import kotlinx.coroutines.launch
 
+@SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InicioView(navController: NavController, viewModel: FigurasViewModel){
@@ -67,20 +69,22 @@ fun InicioView(navController: NavController, viewModel: FigurasViewModel){
 
     val items = listOf(
         NavigationItem(
-            title = "Inicio",
+            title = "Mi colección",
             selectedIcon = Icons.Filled.Home,
             unselectedIcon = Icons.Outlined.Home,
+            "inicio"
         ),
         NavigationItem(
-            title = "Ayuda",
+            title = "Sobre Amiibo",
             selectedIcon = Icons.Filled.Info,
             unselectedIcon = Icons.Outlined.Info,
-            badgeCount = 45
+            "sobreamiibo"
         ),
         NavigationItem(
             title = "Opciones",
             selectedIcon = Icons.Filled.Settings,
             unselectedIcon = Icons.Outlined.Settings,
+            "opciones"
         ),
     )
 
@@ -92,7 +96,9 @@ fun InicioView(navController: NavController, viewModel: FigurasViewModel){
                                 NavigationDrawerItem(
                                     label = { Text(text = item.title)},
                                     selected = index == selectedItemIndex,
-                                    onClick = { selectedItemIndex = index
+                                    onClick = {
+                                        navController.navigate(item.route)
+                                        selectedItemIndex = index
                                             scope.launch{
                                                 drawerState.close()
                                             }
