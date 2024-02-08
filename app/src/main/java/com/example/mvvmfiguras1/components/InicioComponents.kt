@@ -18,9 +18,11 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material3.Card
+import androidx.compose.material3.DrawerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -51,11 +53,12 @@ import com.example.mvvmfiguras1.models.FigurasLista
 import com.example.mvvmfiguras1.ui.theme.BlancoRoto
 import com.example.mvvmfiguras1.ui.theme.RojoAmiibo
 import com.example.mvvmfiguras1.utils.Constantes
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainTopBar(titulo: String){
+fun MainTopBar(titulo: String, drawerState: DrawerState, scope: CoroutineScope){
     TopAppBar(
         title = {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
@@ -71,7 +74,11 @@ fun MainTopBar(titulo: String){
         },
         // The navigation icon is set to a menu icon.
         navigationIcon = {
-            IconButton(onClick = {  }) {
+            IconButton(onClick = {
+                scope.launch {
+                    drawerState.open()
+                }
+                 }) {
                 Icon(Icons.Filled.Menu, contentDescription = "Navigation Icon")
             }
         },
@@ -142,7 +149,7 @@ fun InicioImagen(imagen:String){
     val imagen = rememberImagePainter(data = imagen)
     val context = LocalContext.current
     val prefs = remember { PreferenceManager.getDefaultSharedPreferences(context) }
-    val saturacion = remember { mutableStateOf(prefs.getFloat(imagen.toString(), 0f)) }
+    val saturacion = remember { mutableStateOf(prefs.getFloat(imagen.toString(), 1f)) }
     val scope = rememberCoroutineScope()
 
     Image(
@@ -152,10 +159,10 @@ fun InicioImagen(imagen:String){
             .background(Color.White)
             .clickable {
                 scope.launch {
-                    if (saturacion.value == 0f) {
-                        saturacion.value = 1f
-                    } else {
+                    if (saturacion.value == 1f) {
                         saturacion.value = 0f
+                    } else {
+                        saturacion.value = 1f
                     }
                     prefs
                         .edit()
@@ -170,39 +177,6 @@ fun InicioImagen(imagen:String){
     )
 }
 
-//@Composable
-//fun InicioImagen(imagen:String){
-//    val imagen = rememberImagePainter(data = imagen)
-//    val context = LocalContext.current
-//    val prefs = remember { PreferenceManager.getDefaultSharedPreferences(context) }
-//    val saturaciones = remember { mutableStateMapOf<String, Float>() }
-//    val scope = rememberCoroutineScope()
-//
-//    val saturacion = saturaciones.getOrPut(imagen.toString()) {
-//        prefs.getFloat(imagen.toString(), 0f)
-//    }
-//
-//    Image(
-//        modifier = Modifier
-//            .height(200.dp)
-//            .width(200.dp)
-//            .background(Color.White)
-//            .clickable {
-//                scope.launch {
-//                    if (saturacion == 0f) {
-//                        saturaciones[imagen.toString()] = 1f
-//                    } else {
-//                        saturaciones[imagen.toString()] = 0f
-//                    }
-//                    prefs.edit().putFloat(imagen.toString(), saturaciones[imagen]!!).apply()
-//                }
-//            },
-//        painter = imagen,
-//        contentDescription = null,
-//        contentScale = ContentScale.Fit,
-//        colorFilter = ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(saturacion) })
-//    )
-//}
 
 
 
